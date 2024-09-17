@@ -21,7 +21,7 @@ A dynamic data management system built with Alpine.js, TailwindCSS, Axios, and i
 
 1. **Clone the Repository**:
    ```bash
-   git clone https://github.com/yourusername/ahy-consulting-data-sheets.git
+   https://github.com/varad177/ahy-consulting-data-sheet.git
    cd ahy-consulting-data-sheets
 
 2. **Install Live Server In VS CODE **:
