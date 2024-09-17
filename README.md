@@ -24,9 +24,36 @@ A dynamic data management system built with Alpine.js, TailwindCSS, Axios, and i
    git clone https://github.com/yourusername/ahy-consulting-data-sheets.git
    cd ahy-consulting-data-sheets
 
+2. **Install Live Server In VS CODE **:
+   ```bash
+   go to Extension Box of VS code and Install Live Server
 
-├── assets/         # Static assets like images and logos
-├── index.html      # Main HTML file
-├── script.js       # JavaScript logic with Alpine.js and Axios
-├── styles.css      # Additional custom styles (if any)
-└── README.md       # Project documentation
+3. **Open The Project with Live Server**:
+   ```bash
+   Do right Click and Open the project with Live Server
+
+
+
+**Some Images** 
+
+Home Page 
+![image](https://github.com/user-attachments/assets/cea509fd-758e-4d88-a6ef-5ba5e1159493)
+
+Data Form
+![image](https://github.com/user-attachments/assets/68551262-1a2a-4db6-9ebe-f5d177865bf7)
+
+Loader
+![image](https://github.com/user-attachments/assets/fe0e9e98-2fa7-4ccc-a4c1-441def43fa3d)
+
+Data On Home Page 
+![image](https://github.com/user-attachments/assets/4c22857c-c175-4947-a49e-01cf8af79fb6)
+
+Edit Form
+![image](https://github.com/user-attachments/assets/887f5bd0-8ed7-4d09-9718-33c28688b369)
+
+
+
+
+
+
+
