@@ -26,7 +26,7 @@ document.addEventListener("alpine:init", () => {
       this.loading = true;
 
       axios
-        .get("https://sheetdb.io/api/v1/9us4ij9gt9vki")
+        .get("https://sheetdb.io/api/v1/ielovl22jqkyc")
         .then((response) => {
           if (Array.isArray(response.data) && response.data.length === 0) {
             this.dataAvailable = true;
@@ -128,7 +128,7 @@ document.addEventListener("alpine:init", () => {
       this.showModal = false;
 
       axios
-        .post("https://sheetdb.io/api/v1/9us4ij9gt9vki", {
+        .post("https://sheetdb.io/api/v1/ielovl22jqkyc", {
           data: [this.rowData],
         })
         .then(() => {
@@ -148,7 +148,7 @@ document.addEventListener("alpine:init", () => {
       this.loading = true;
       this.showModal = false;
       axios
-        .put(`https://sheetdb.io/api/v1/9us4ij9gt9vki/id/${this.currentId}`, {
+        .put(`https://sheetdb.io/api/v1/ielovl22jqkyc/id/${this.currentId}`, {
           data: this.rowData,
         })
         .then(() => {
@@ -167,7 +167,7 @@ document.addEventListener("alpine:init", () => {
     deleteRow(id) {
       this.loading = true;
       axios
-        .delete(`https://sheetdb.io/api/v1/9us4ij9gt9vki/id/${id}`)
+        .delete(`https://sheetdb.io/api/v1/ielovl22jqkyc/id/${id}`)
         .then(() => {
           this.notificationMessage = "Data deleted successfully!";
           this.notification = true;
