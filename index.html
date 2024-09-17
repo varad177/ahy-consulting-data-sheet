@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ahy consulting data Sheets</title>
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+    ></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.7/axios.min.js"></script>
+    <script
+      src="https://kit.fontawesome.com/b0a4a992bb.js"
+      crossorigin="anonymous"
+    ></script>
+    <style>
+      /* Overlay to cover the entire screen */
+      .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: white;
+        z-index: 1000;
+      }
+
+
+      .spinner {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100px; 
+        height: 100px; 
+      }
+
+
+      .spinner-image {
+        width: 100%; 
+        height: auto; 
+      }
+    </style>
+  </head>
+
+  <body class="bg-gray-100">
+    <!-- nav bar  -->
+
+    <nav class="w-full p-4 flex justify-between bg-[#310673] items-center">
+      <div class=" ">
+        <img
+          class="h-12 max-md:h-8"
+          src="./assets/ahywhitelogo.png"
+          alt="logo"
+        />
+      </div>
+      <div></div>
+    </nav>
+
+    <div
+      x-data="spreadsheetData"
+      x-init="fetchData()"
+      class="max-w-2xl mx-auto mt-10 max-md:mt-32 md:p-6 p-3 bg-[#310673] shadow-lg md:rounded-lg"
+    >
+      <template x-if="loading">
+        <div class="overlay">
+          <div class="spinner">
+            <img
+              src="./assets/ahy-preloader.gif"
+              alt="Loading"
+              class="spinner-image"
+            />
+          </div>
+        </div>
+      </template>
+      <div class="flex justify-between items-center mb-4">
+        <h1 class="text-xl font-bold text-white">Ahy Members</h1>
+        <button
+          @click="openAddModal"
+          class="bg-white text-black hover:bg-gray-200 px-4 py-2 rounded flex items-center gap-3 transition duration-300 ease-in-out"
+        >
+          <span
+            ><i
+              class="fa-solid fa-plus transform transition-transform duration-300"
+            ></i
+          ></span>
+          <p class="hidden md:block">Add Data</p>
+        </button>
+      </div>
+      <template x-if="dataAvailable">
+        <div class="text-white text-center text-2xl p-4 font-bold">No data Available<div>
+      </template>
+
+      <!-- Data Display -->
+      <div class="space-y-2">
+        <template
+          x-for="(row, index) in paginatedRows"
+          :key="row.id"
+          x-transition
+        >
+          <div
+            class="bmd mx-auto bg-white relative shadow-lg rounded-lg p-6 pt-2"
+          >
+            <div class="flex gap-3 w-fit absolute right-3">
+              <button
+                @click="openEditModal(row)"
+                class="bg-blue-500 text-white px-3 py-1 rounded text-sm flex items-center gap-2"
+              >
+                <i class="fa-solid fa-pen-to-square"></i>
+                <p class="hidden md:block">Edit</p>
+              </button>
+              <button
+                @click="deleteRow(row.id)"
+                class="bg-red-500 text-white px-3 py-1 rounded text-sm flex items-center gap-2"
+              >
+                <i class="fa-solid fa-trash"></i>
+                <p class="hidden md:block">Delete</p>
+              </button>
+            </div>
+            <div class="w-full rounded-lg p-2">
+              <p class="text-lg font-semibold text-gray-800">
+                <strong>Name:</strong>
+                <span x-text="row.Name" class="text-gray-600"></span>
+              </p>
+              <p class="mt-2 text-lg font-semibold text-gray-800">
+                <strong>Email:</strong>
+                <span x-text="row.Email" class="text-gray-600"></span>
+              </p>
+              <p class="mt-2 text-lg font-semibold text-gray-800">
+                <strong>Job:</strong>
+                <span x-text="row.Job" class="text-gray-600"></span>
+              </p>
+              <p class="mt-2 text-lg font-semibold text-gray-800">
+                <strong>Location:</strong>
+                <span x-text="row.Location" class="text-gray-600">Mumbai</span>
+              </p>
+            </div>
+          </div>
+        </template>
+      </div>
+
+      <!-- Pagination Controls -->
+      <div class="flex max-md:justify-center md:justify-between mt-4">
+        <button
+          @click="prevPage"
+          :disabled="currentPage === 1"
+          class="bg-blue-600 p-2 text-white flex gap-2 items-center rounded-tl-full rounded-bl-full transform transition-transform duration-300 hover:-translate-x-2 disabled:cursor-not-allowed disabled:hover:translate-x-0 disabled:bg-gray-500"
+        >
+          <i
+            class="fa-solid fa-arrow-left rounded-full border border-2 p-3"
+          ></i>
+          <p class="font-bold hidden md:block">Previous</p>
+        </button>
+        <button
+          @click="nextPage"
+          :disabled="currentPage === totalPages"
+          class="bg-blue-600 p-2 text-white flex gap-2 items-center rounded-tr-full rounded-br-full transform transition-transform duration-300 hover:translate-x-2 disabled:cursor-not-allowed disabled:hover:translate-x-0 disabled:bg-gray-500"
+        >
+          <p class="font-bold hidden md:block">Next</p>
+          <i
+            class="fa-solid fa-arrow-right rounded-full border border-2 p-3"
+          ></i>
+        </button>
+      </div>
+
+      <!-- Modal Popup -->
+      <div
+        x-show="showModal"
+        x-transition.opacity.duration.500ms
+        class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
+      >
+        <div
+          class="bg-white p-6 rounded-lg max-w-lg w-full border border-[#310673] border-2"
+        >
+          <h2
+            class="text-lg font-bold mb-4 text-[#310673] text-center md:text-2xl"
+            x-text="isEditing ? 'Edit Member' : 'Add Member'"
+          ></h2>
+          <form
+            @submit.prevent="isEditing ? updateForm() : submitForm()"
+            class="space-y-4"
+          >
+            <div class="mb-4">
+              <label class="block text-[#310673]">Name</label>
+              <input
+                type="text"
+                x-model="rowData.Name"
+                class="border border-[#310673] p-2 w-full rounded"
+              />
+            </div>
+            <div class="mb-4">
+              <label class="block text-[#310673]">Email</label>
+              <input
+                type="email"
+                x-model="rowData.Email"
+                class="border p-2 w-full rounded border-[#310673]"
+              />
+            </div>
+            <div class="mb-4">
+              <label class="block text-[#310673]">Job</label>
+              <input
+                type="text"
+                x-model="rowData.Job"
+                class="border p-2 w-full rounded border-[#310673]"
+              />
+            </div>
+            <div class="mb-4">
+              <label class="block text-[#310673]">Location</label>
+              <input
+                type="text"
+                x-model="rowData.Location"
+                class="border p-2 w-full rounded border-[#310673]"
+              />
+            </div>
+            <div class="flex justify-between">
+              <button
+                type="button"
+                @click="showModal = false"
+                class="bg-[#310673] p-2 rounded text-white"
+              >
+                <i class="fa-solid fa-circle-xmark text-red-400 mr-2"></i>
+                Cancel
+              </button>
+
+              <button type="submit" class="bg-[#310673] p-2 rounded text-white">
+                <i class="fa-solid fa-square-check text-green-300 mr-2"></i
+                >Submit
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div
+        x-show="notification"
+        x-transition.opacity.duration.500ms
+        x-init="() => { if (notification) { setTimeout(() => notification = false, 3000); } }"
+        class="fixed top-4 right-4 bg-blue-500 text-white p-4 rounded-lg shadow-lg z-50"
+      >
+        <i
+          @click="notification = false"
+          class="fa-solid fa-circle-xmark absolute right-1 top-1 cursor-pointer"
+        ></i>
+        <!-- <span>data updated succefully </span> -->
+        <span x-text="notificationMessage"></span>
+      </div>
+    </div>
+
+   <script src="./script.js"></script>
+  </body>
+</html>
