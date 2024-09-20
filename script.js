@@ -61,6 +61,10 @@ document.addEventListener("alpine:init", () => {
     },
 
     openAddModal() {
+      this.notificationMessage = "";
+      this.notificationMessage = "You can not add the data right now.";
+      this.notification = true;
+      return
       this.isEditing = false;
       this.rowData = {
         Name: "",
